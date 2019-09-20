@@ -90,7 +90,10 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
+    
     #axiò és un dfs que funciona, però falta gestionar les direccions
+    
+    """
     visitats = []
     aVisitar = util.Stack()
     aVisitar.push(problem.getStartState)
@@ -115,11 +118,50 @@ def depthFirstSearch(problem):
         direccions.append(i[1][1])
         
     return direccions
-
+    
+    """
+    
+    aVisitar = util.Stack()
+    visitats = []
+    direccions = []
+    startNode = (problem.getStartState(),visitats,direccions) #a cada node guardem TOTA la llista de direccions i tots els pares dels que venim, aixi quan trobem el node de desti nomes hem de retornar les direccions del mateix node.
+    
+    aVisitar.push(startNode)
+    
+    while not aVisitar.isEmpty():
+        (node, visitats, direccions) = aVisitar.pop()
+        
+        if problem.isGoalState(node):
+            return direccions
+        
+        for successor, direccio, cost in problem.getSuccessors(node) :
+            if successor not in visitats:
+                newNode = (successor, visitats+[successor], direccions+[direccio]) #es guarden dins de cada node
+                aVisitar.push(newNode)
+        
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    #exactament el mateix, he canviat Stack per Queue. Probablement es pugui optimitzar una miqueta més...
+    
+    aVisitar = util.Queue()
+    visitats = []
+    direccions = []
+    startNode = (problem.getStartState(),visitats,direccions) #a cada node guardem TOTA la llista de direccions i tots els pares dels que venim, aixi quan trobem el node de desti nomes hem de retornar les direccions del mateix node.
+    
+    aVisitar.push(startNode)
+    
+    while not aVisitar.isEmpty():
+        (node, visitats, direccions) = aVisitar.pop()
+        
+        if problem.isGoalState(node):
+            return direccions
+        
+        for successor, direccio, cost in problem.getSuccessors(node) :
+            if successor not in visitats:
+                newNode = (successor, visitats+[successor], direccions+[direccio]) #es guarden dins de cada node
+                aVisitar.push(newNode)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
