@@ -143,24 +143,26 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     
-    #exactament el mateix, he canviat Stack per Queue. Probablement es pugui optimitzar una miqueta més...
+    #Com que no canviem la depth al explorar, no ens hem de guardar cada vistats dins de cada node, nomes fa falta tenir una llista general, ja que amb els pops ens assegurem ja que visitem la mateix depth.
     
     aVisitar = util.Queue()
     visitats = []
     direccions = []
-    startNode = (problem.getStartState(),visitats,direccions) #a cada node guardem TOTA la llista de direccions i tots els pares dels que venim, aixi quan trobem el node de desti nomes hem de retornar les direccions del mateix node.
+    startNode = (problem.getStartState(),direccions) #a cada node guardem TOTA la llista de direccions i tots els pares dels que venim, aixi quan trobem el node de desti nomes hem de retornar les direccions del mateix node.
     
     aVisitar.push(startNode)
     
     while not aVisitar.isEmpty():
-        (node, visitats, direccions) = aVisitar.pop()
+        (node, direccions) = aVisitar.pop()
         
         if problem.isGoalState(node):
             return direccions
         
+        visitats.append(node);
         for successor, direccio, cost in problem.getSuccessors(node) :
             if successor not in visitats:
-                newNode = (successor, visitats+[successor], direccions+[direccio]) #es guarden dins de cada node
+                visitats.append(successor);
+                newNode = (successor, direccions+[direccio]) #es guarden dins de cada node
                 aVisitar.push(newNode)
 
 def uniformCostSearch(problem):
