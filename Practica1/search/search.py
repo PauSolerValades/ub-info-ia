@@ -152,6 +152,9 @@ def breadthFirstSearch(problem):
     
     aVisitar.push(startNode)
     
+    print(problem.getStartState)
+    
+    
     while not aVisitar.isEmpty():
         (node, direccions) = aVisitar.pop()
         
