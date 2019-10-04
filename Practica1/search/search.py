@@ -201,6 +201,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return direccions
         
         if nodeCoord in visitats: continue
+    
         visitats.append(nodeCoord)
         
         for fillCoord, direccio, cost in problem.getSuccessors(nodeCoord):
