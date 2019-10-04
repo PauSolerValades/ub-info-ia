@@ -180,7 +180,35 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+                
+    aVisitar = util.PriorityQueue()
+    visitats = []
+    direccions = []
+    costTotal = 0
+    prediccio = 0+heuristic(problem.getStartState(), problem)
+    # ((3,4), [west, south], 54) ()
+    # (on soc, camí absolut, cost mínim per arribar)
+    # Node = (Coordenades, Path, Prediction)
+    startNode = (problem.getStartState(), direccions, costTotal) #a cada node guardem TOTA la llista de direccions i tots els pares dels que venim, aixi quan trobem el node de desti nomes hem de retornar les direccions del mateix node.
+    
+    aVisitar.push(startNode, prediccio)
+    
+    while not aVisitar.isEmpty():
+        
+        nodeCoord, direccions, costRecorregut = aVisitar.pop()
+        
+        if problem.isGoalState(nodeCoord):
+            return direccions
+        
+        if nodeCoord in visitats: continue
+        visitats.append(nodeCoord)
+        
+        for fillCoord, direccio, cost in problem.getSuccessors(nodeCoord):
+            if fillCoord not in visitats:
+                newNode = (fillCoord, direccions+[direccio],costRecorregut+cost) #es guarden dins de cada node
+                aVisitar.push(newNode, costRecorregut + cost + heuristic(fillCoord,problem))
+
+  
 
 
 # Abbreviations
