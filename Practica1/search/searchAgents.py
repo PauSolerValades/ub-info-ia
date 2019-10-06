@@ -395,38 +395,27 @@ def cornersHeuristic(state, problem):
     coordYVec = problem.corners[0][1]-state[0][1]    
     return disEuclid(coordXVec, coordYVec)
 """
-    import math
-
     nodeActual = state[0]
-    cornersVisited = state[1] #tupla de boleans referents a cada cantonada.
+    cornersNotVisited = [problem.corners[i] for i in range(len(problem.corners)) if state[1][i]==False] #tupla de boleans referents a cada cantonada.
     totalHeuristic = 0 #valor que retornarem
-    
-    nonVisitedCorner = []
-    
-    def distEuclid(node1, node2):
-        coordXVec = node2[0] - node1[1]
-        coordYVec = node2[0] - node1[1]
-        
-        print node2[0], node2[1], node1[0], node1[1]
-        
-        print coordXVec, coordYVec
-        
-        return math.sqrt(coordXVec**2 + coordYVec**2)
-    
-    for corner in corners:
-        if corner not in cornersVisited:
-            nonVisitedCorner.append(corner) #controlem les corners que ja hem visitat per poder-hi interar despres.
            
     nodeAux = nodeActual #el necessitem per calcular distancies que son diferents
-    while nonVisitedCorner:
-        dist, corner = min([(distEuclid(nodeAux, corner),corner) for corner in nonVisitedCorner])
+    while cornersNotVisited:
+        dist, corner = min([(util.manhattanDistance(nodeAux, corner),corner) for corner in cornersNotVisited],key = lambda t: t[0])
         #dist, corner = min([(util.manhattanDistance(nodeAux, corner),corner) for corner in nonVisitedCorner])
-        print dist, corner
         totalHeuristic += dist
         nodeAux = corner
-        nonVisitedCorner.remove(corner)
+        cornersNotVisited.remove(corner)
         
     return totalHeuristic
+
+
+def distEuclid(node1, node2):
+        coordXVec = node2[0] - node1[0]
+        coordYVec = node2[1] - node1[1]
+
+        
+        return (coordXVec**2 + coordYVec**2) ** 0.5
         
     
 class AStarCornersAgent(SearchAgent):
