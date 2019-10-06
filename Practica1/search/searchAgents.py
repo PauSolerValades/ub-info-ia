@@ -275,7 +275,11 @@ class CornersProblem(search.SearchProblem):
 
     You must select a suitable state space and successor function
     """
-
+    """
+    Our states are represented by (position, cornerDict)
+    where cornerDict is a dictionary where each corner is a key which value is True if it has been visited and
+    False otherwise
+    """
     def __init__(self, startingGameState):
         """
         Stores the walls, pacman's starting position and corners.
@@ -291,8 +295,12 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.listCorners = [False, False, False, False]
         
+        self.cornerDict = {} #construim un diccionari per guardar les cantonades i poder-hi accedir amb més facilitat. key: Coord corners value: l'index de la corner.
+        for i in range(len(self.corners)):
+            self.cornerDict[self.corners[i]] = i
+        
+        #print self.cornerDict
 
     def getStartState(self):
         """
@@ -300,19 +308,18 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        
-        return self.startingPosition
+        cornersState = tuple((False for corner in self.corners))
+        return (self.startingPosition, cornersState)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        
-        return all(ele== True for ele in self.listCorners)
+        stateTuple = state[1]
+        #print(stateTuple)
+        return all(stateTuple)
 
-        
-        
     def getSuccessors(self, state):
         """
         Returns successor states, the actions they require, and a cost of 1.
@@ -332,26 +339,20 @@ class CornersProblem(search.SearchProblem):
             #   dx, dy = Actions.directionToVector(action)
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
-
-            "*** YOUR CODE HERE ***"
-            x,y = state
+            x,y = state[0]
+            cost = 1
+            #print state[0], state[1]
             dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                nextState = (nextx, nexty)
-                if((nextx,nexty)==self.corners[0]):
-                    self.listCorners[0]==True
-                if((nextx,nexty)==self.corners[1]):
-                    self.listCorners[1]==True
-                if((nextx,nexty)==self.corners[2]):
-                    self.listCorners[2]==True
-                if((nextx,nexty)==self.corners[3]):
-                    self.listCorners[3]==True
-                    
-                cost = 1
-                successors.append( ( nextState, action, cost) )
-
-
+            nextx,nexty = int(x+dx), int(y+dy)
+            hitsWall = self.walls[nextx][nexty]
+            nextPosition = (nextx, nexty)
+            if(not hitsWall):
+                if(nextPosition in self.corners):
+                    newTuple = list(state[1]) #convertim la tupla a llista per operar
+                    newTuple[self.cornerDict[nextPosition]] = True #la cantonada que hem trobat la marquem com a visitada al diccionari
+                    successors.append(((nextPosition, tuple(newTuple)), action, cost)) #i tornem a successors l'estat de la tupla.
+                else:
+                    successors.append(((nextPosition, state[1]), action, cost))
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -386,8 +387,48 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    #molt probablement la distancia euclidiana es una prou bona euristica
+    """
+    
+        
+    coordXVec = problem.corners[0][0]-state[0][0]
+    coordYVec = problem.corners[0][1]-state[0][1]    
+    return disEuclid(coordXVec, coordYVec)
+"""
+    import math
 
+    nodeActual = state[0]
+    cornersVisited = state[1] #tupla de boleans referents a cada cantonada.
+    totalHeuristic = 0 #valor que retornarem
+    
+    nonVisitedCorner = []
+    
+    def distEuclid(node1, node2):
+        coordXVec = node2[0] - node1[1]
+        coordYVec = node2[0] - node1[1]
+        
+        print node2[0], node2[1], node1[0], node1[1]
+        
+        print coordXVec, coordYVec
+        
+        return math.sqrt(coordXVec**2 + coordYVec**2)
+    
+    for corner in corners:
+        if corner not in cornersVisited:
+            nonVisitedCorner.append(corner) #controlem les corners que ja hem visitat per poder-hi interar despres.
+           
+    nodeAux = nodeActual #el necessitem per calcular distancies que son diferents
+    while nonVisitedCorner:
+        dist, corner = min([(distEuclid(nodeAux, corner),corner) for corner in nonVisitedCorner])
+        #dist, corner = min([(util.manhattanDistance(nodeAux, corner),corner) for corner in nonVisitedCorner])
+        print dist, corner
+        totalHeuristic += dist
+        nodeAux = corner
+        nonVisitedCorner.remove(corner)
+        
+    return totalHeuristic
+        
+    
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
