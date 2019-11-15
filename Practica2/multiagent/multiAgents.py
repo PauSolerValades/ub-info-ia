@@ -129,12 +129,58 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-
-        #la idea es que el max som nosaltres i el min la IA
-        num_ghosts = getNumAgents() - 1
         
-        util.raiseNotDefined()
+        def miniMax(gameState, agent, depth):
+            result = []
 
+            if not gameState.getLegalActions(agent) or depth == self.depth: #si l'agent no te mes accions hem acabat.
+                return self.evaluationFunction(gameState), 0
+
+            if agent == gameState.getNumAgents() - 1:
+                depth += 1 #si s'han calculat tots els fantasmes, incrementem la profunditat.
+
+            """---------------------------
+                    Calcular nextAgent
+            ---------------------------"""
+            
+            
+            if agent == gameState.getNumAgents() - 1:
+                nextAgent = self.index
+            else:
+                nextAgent = agent + 1
+
+            #per a cada estat seguent cridem el minmax
+            for action in gameState.getLegalActions(agent):
+
+                if not result: #guardem sempre el primer estat ja que necessitem la llista una miqueta plena.
+                    nextValue = miniMax(gameState.generateSuccessor(agent, action), nextAgent, depth)
+
+                    result.append(nextValue[0])
+                    result.append(action)
+                else:
+
+                    previousValue = result[0] # Keep previous value. Minimax
+                    nextValue = miniMax(gameState.generateSuccessor(agent, action), nextAgent, depth)
+
+                    #comprovem que els seguents siguin millors.
+                    
+                    #Pacman MAX
+                    if agent == self.index:
+                        if nextValue[0] > previousValue:
+                            result[0] = nextValue[0]
+                            result[1] = action
+
+                    #Ghost MIN
+                    else:
+                        if nextValue[0] < previousValue:
+                            result[0] = nextValue[0]
+                            result[1] = action
+                            
+            return result
+        
+        #comencem l'algorisme amb el gameState per defecte, profunditat 0 i l'index de pacman.
+        return miniMax(gameState, self.index, 0)[1]
+        
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
@@ -143,9 +189,69 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
+          
+          Es igual que el minmax pero guardes dos enters que 
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        def alphabeta(gameState,agent,depth,a,b):
+            result = []
+
+            if not gameState.getLegalActions(agent) or depth == self.depth:
+                return self.evaluationFunction(gameState),0
+
+            if agent == gameState.getNumAgents() - 1:
+                depth += 1
+
+            """---------------------------
+                    Calcular nextAgent
+            ---------------------------"""
+
+            if agent == gameState.getNumAgents() - 1:
+                nextAgent = self.index
+            else:
+                nextAgent = agent + 1
+
+            for action in gameState.getLegalActions(agent):
+                if not result:
+                    nextValue = alphabeta(gameState.generateSuccessor(agent, action), nextAgent, depth, a, b)
+
+                    result.append(nextValue[0])
+                    result.append(action)
+
+                    #canvi significatiu: el valor que l'algorisme usara per poda es el minim/maxim entre el que te i a, depenent si fantasmes o pacman
+                    if agent == self.index:
+                        a = max(result[0],a)
+                    else:
+                        b = min(result[0],b)
+                else:
+                    #comprovem si minmax es millor que els anteriors. Si ho es no evaluem certs nodes.
+                    if result[0] > b and agent == self.index:
+                        return result
+
+                    if result[0] < a and agent != self.index:
+                        return result
+
+                    previousValue = result[0] # Keep previous value
+                    nextValue = alphabeta(gameState.generateSuccessor(agent, action), nextAgent, depth, a, b)
+
+                    if agent == self.index:
+                        if nextValue[0] > previousValue:
+                            result[0] = nextValue[0]
+                            result[1] = action
+
+                            a = max(result[0],a)
+
+                    else:
+                        if nextValue[0] < previousValue:
+                            result[0] = nextValue[0]
+                            result[1] = action
+
+                            b = min(result[0],b)
+            return result
+
+        # Cridem alphabeta depth 0 i -inf i inf per aplha i beta respectivament.
+        return alphabeta(gameState, self.index, 0, -float("inf"), float("inf"))[1]
+        
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -158,6 +264,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
           All ghosts should be modeled as choosing uniformly at random from their
           legal moves.
+          
+          Fer que la poda alpha beta falli a posta a vegades o que
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
