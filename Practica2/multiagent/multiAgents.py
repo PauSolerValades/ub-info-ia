@@ -74,8 +74,25 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        minGhostDistance = min([manhattanDistance(newPos,ghostState.configuration.pos) for ghostState in newGhostStates])
+
+        minFoodDistance = 0
+        control=True
+        for _ in range(max(newFood.width, newFood.height)):
+            minFoodDistance+=1
+            
+            control=True
+            for x in range(max(newPos[0] - minFoodDistance,0), min(newPos[0] + minFoodDistance+1, newFood.width)):
+                for y in range(max(newPos[1] - minFoodDistance,0), min(newPos[1] + minFoodDistance+1,newFood.height)):
+                    if newFood[x][y]:
+                        control = False
+                        break
+                if not control: break
+            if not control: break
+        else:
+            minFoodDistance = 0
+    
+        return successorGameState.getScore() + 1/(0.5 + minFoodDistance) - 1.1/(0.5 + minGhostDistance)
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -144,10 +161,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
             ---------------------------"""
             
             
-            if agent == gameState.getNumAgents() - 1:
+            if agent == gameState.getNumAgents() - 1: #es el pacman
                 nextAgent = self.index
             else:
-                nextAgent = agent + 1
+                nextAgent = agent + 1 #son els fantasmes.
 
             #per a cada estat seguent cridem el minmax
             for action in gameState.getLegalActions(agent):
@@ -175,6 +192,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
                         if nextValue[0] < previousValue:
                             result[0] = nextValue[0]
                             result[1] = action
+                            
+            
                             
             return result
         
@@ -267,9 +286,57 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           
           Fer que la poda alpha beta falli a posta a vegades o que
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        def expectiMax(gameState, agent, depth):
+            result = []
 
+            if not gameState.getLegalActions(agent) or depth == self.depth:
+                return self.evaluationFunction(gameState),0
+
+            if agent == gameState.getNumAgents() - 1:
+                depth += 1
+
+            """---------------------------
+                    Calcular nextAgent
+            ---------------------------"""
+            
+            if agent == gameState.getNumAgents() - 1:
+                nextAgent = self.index
+            else:
+                nextAgent = agent + 1
+        
+            for action in gameState.getLegalActions(agent):
+                if not result: # First move
+                    nextValue = expectiMax(gameState.generateSuccessor(agent, action), nextAgent, depth)
+                    #la probabilitat de que els fantasmes facin una accio concreta es 1/p on p son el nombre d'accions legals disponibles. Com que totes les eleccions tenen la mateixa probabilitat, aixo funciona.
+                    
+                    if(agent != self.index):
+                        result.append((1.0 / len(gameState.getLegalActions(agent))) * nextValue[0])
+                        result.append(action)
+                    else:
+                        
+                        result.append(nextValue[0])
+                        result.append(action)
+                else:
+
+                    previousValue = result[0]
+                    nextValue = expectiMax(gameState.generateSuccessor(agent, action), nextAgent, depth)
+
+                    #El pacman funciona exactament igual.
+                    if agent == self.index:
+                        if nextValue[0] > previousValue:
+                            result[0] = nextValue[0]
+                            result[1] = action
+
+                    #no escollim la millor opcio (algorisme) pero continuem calculant la suma del total.
+                    else:
+                        result[0] = result[0] + (1.0 / len(gameState.getLegalActions(agent))) * nextValue[0]
+                        result[1] = action
+            return result
+
+        #comencem amb profunditat 0, torn de pacman (index == 0 o self.index)
+        return expectiMax(gameState, self.index, 0)[1]
+        
 def betterEvaluationFunction(currentGameState):
     """
       Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
@@ -277,9 +344,65 @@ def betterEvaluationFunction(currentGameState):
 
       DESCRIPTION: <write something here so we know what you did>
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    
+    food = currentGameState.getFood().asList()
+    ghosts = currentGameState.getGhostStates()
+    pacmanCoord = currentGameState.getPacmanPosition()
+    
+    scaredGhosts = []
+    activeGhosts = []
+    
+    for ghost in ghosts:
+        if ghost.scaredTimer: # Is scared ghost
+            scaredGhosts.append(ghost.getPosition())
+        else:
+            activeGhosts.append(ghost.getPosition())
+            
+    powerUps = len(currentGameState.getCapsules())
+    totalFood = len(food)
+    
+    evaluation = 0
+    
+    #si tenim millors scores, tindrem millors evaluacions. Augmentem el valor de l'score_url
+    evaluation += 1.5*currentGameState.getScore()
+    
+    #volem evitar estats en els que el pacman no es mengi el menjar, es a dir, canviarem directament que per cada item de menjar que quedi a l'estat que evaluem sigui pitjor.
+    evaluation += -10*totalFood
+    
+    #hem de donar valor als powerups del pacman, aixi que si l'estat seguent en te, restem puntuacio
+    evaluation += -50*powerUps
+    
+    #ara comprovarem que les distancies siguin minimes al valor al que volem anar. Podriem fer-ho implementant un bfs per saber a quin de tots els objetes seguents volem anar-hi, pero no  ho farem aixi. Directament hardcodejarem el que necessitem per anar (segons la distancia) al lloc mes propoer possible.
+    
+    foodDist = [manhattanDistance(pacmanCoord, f) for f in food]
+    powerUpDist = [manhattanDistance(pacmanCoord, pu) for pu in currentGameState.getCapsules()]
+    scaredGhostsDist = [manhattanDistance(pacmanCoord, sg) for sg in scaredGhosts]
+    activeGhostsDist = [manhattanDistance(pacmanCoord, ag) for ag in activeGhosts]
+        
+    for item in foodDist:
+        if item < 3:
+            evaluation += -1 * item #esta aprop
+        if item < 7:
+            evaluation += -0.5 * item #esta mes lluny
+        else:
+            evaluation += -0.2 * item #esta molt lluny
+            
+    for item in scaredGhostsDist:
+        if item < 3:
+            evaluation += -20 * item #esta aprop
+        else:
+            evaluation += -10 * item #no ho esta
+    
+    for item in activeGhostsDist: #analogament amb els pesos del reves perque volem fugir dels fantasmes actius que tenim aprop
+        if item < 3:
+            evaluation += 6 * item
+        elif item < 7:
+            evaluation += 4 * item
+        else:
+            evaluation += item
 
+    return evaluation
+    
 # Abbreviation
 better = betterEvaluationFunction
-
