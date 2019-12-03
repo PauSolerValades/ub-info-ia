@@ -24,17 +24,25 @@ class QLearningAgent(ReinforcementAgent):
       Q-Learning Agent
 
       Functions you should fill in:
-        - computeValueFromQValues (Q1)
+      
+        - computeValueFromQValues (Q1): 
             - Break ties randomly for better behavior with random.choice()
             - Actions your agent HAS NOT SEEN before have a Q-value of 0.
             - Actions your agent HAS SEEN have a negative Q-value
-        - computeActionFromQValues (Q1)
+            
+            
+        - computeActionFromQValues (Q1):
             - Only acces Q-values with getQValue
-        - getQValue (Q1)
+            
+        - getQValue (Q1):
             - Only acces Q-values with getQValue
-        - getAction
-        - update
-
+            
+        - getAction (Q2):
+            - Randomize with flip coin if you are going to pick the best path calculated, you choose another one.
+        
+        - update (Q1)
+            - Fucking formula lmao
+            
       Instance variables you have access to
         - self.epsilon (exploration prob)
         - self.alpha (learning rate)
@@ -45,9 +53,10 @@ class QLearningAgent(ReinforcementAgent):
           which returns legal actions for a state
     """
     def __init__(self, **args):
-        "You can initialize Q-values here..."
+
         ReinforcementAgent.__init__(self, **args)
 
+        "You can initialize Q-values here..."
         self.q_values = util.Counter()
 
     def getQValue(self, state, action):
@@ -56,10 +65,10 @@ class QLearningAgent(ReinforcementAgent):
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-
-        if not self.q_values.has_key((state, action)):
-            self.q_values[(state, action)] = 0.0 #si no hem vist l'estat el posem al diccionari i el posem a 0
-
+        """
+        util.Couter inicialitza a 0 tots els valors possibles del diccionari, així que no fa falta posar-la a 0.0
+        """
+        
         return self.q_values[(state, action)]
 
 
@@ -83,14 +92,12 @@ class QLearningAgent(ReinforcementAgent):
         """
         Se de sobres que aquesta manera no es la mes optima ja que recorres diveses vegades la llista, pero no em sembla massa rellevant ja que la llista no sera mai massa gran
         """
-
+        """
         m = max(q_list)
-
-
-        #PERQUE PUTES SI POSES UN RANDOM QUE ES COM HA D'ANAR NO PUTES PASSA L'AUTRGRADER SUICIDEU-VOS BERKELEY
+        
         largest = [j for i, j in enumerate(q_list) if j == m]
-
-        return random.choice(largest)
+        """
+        return max(q_list)
 
 
     def computeActionFromQValues(self, state):
@@ -101,20 +108,19 @@ class QLearningAgent(ReinforcementAgent):
 
           ACTUALITZA EL VALOR DEL DICCIONARI
         """
-        "*** YOUR CODE HERE ***"
-
         accions_legals = self.getLegalActions(state)
 
         if not accions_legals:
             return None
+        
+        q_list = [(self.getQValue(state, action), action) for action in accions_legals]
+        
+        m = max(q_list, key=lambda i:i[0])
+        #print(q_list, m)
+        
+        largest = [j[1] for j in q_list if j[0] == m]
 
-        q_actions = util.Counter()
-        for action in accions_legals:
-            q_actions[action] = self.getQValue(state, action)
-
-        #Counter is numpy, so i can use argMax :)
-
-        return q_actions.argMax()
+        return random.choice(largest) if largest else m[1]
 
     def getAction(self, state):
         """
@@ -129,12 +135,18 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        action = None
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        
+        if not legalActions:
+            action = None
+        
+        if util.flipCoin(self.epsilon): #un epsion vegades entra al if
+            action = random.choice(legalActions)
+            
+        else:
+            action = self.computeActionFromQValues(state)
+            
         return action
-
+        
     def update(self, state, action, nextState, reward):
         """
           The parent class calls this to observe a
@@ -143,10 +155,18 @@ class QLearningAgent(ReinforcementAgent):
 
           NOTE: You should never call this function,
           it will be called on your behalf
+          
+          RELACIO AMB LES DIAPOS DE TEORIA:
+          
+          alpha = es el learning rate
+          aprox = es la gamma
+          
+          DIAPO 17 equacions
         """
+        gamma = self.discount
 
-        aprox = reward + self.discount * self.computeValueFromQValues(nextState)
-        self.q_values[(state, action)] = (1 - self.alpha)*self.getQValue(state, action) + self.alpha*aprox
+        sample = reward + gamma * self.computeValueFromQValues(nextState)
+        self.q_values[(state, action)] = (1 - self.alpha)*self.getQValue(state, action) + self.alpha*sample
 
 
     def getPolicy(self, state):
