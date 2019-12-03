@@ -26,13 +26,16 @@ def question3():
     # If not possible, return 'NOT POSSIBLE'
 
     """
+    No es possible que creui el pont.
 
+    Quan epsilon = 0.0, vol dir que el nostre algorisme sempre esta explorant, intentant trobar quina es la ruta mes optima per aconseguir el problema.
+    L'aplha=1 ens esta dient que els estats que hem investigat previament no compten per RES a l'aprenentatge que estem realitzant.
+
+    Conclusio: si amb aquests parametres (que implquen que l'algorisme nomes esta intentant trobar una resposta, ni de bon tros la mes optima) no es capaç de trobar la repsosta amb iterecions INDETERMINADES, es impossible que per altres valors que poguem posar
     """
 if __name__ == '__main__':
     print 'Answers to analysis questions:'
     import analysis
     for q in [q for q in dir(analysis) if q.startswith('question')]:
         response = getattr(analysis, q)()
-        print '  Question %s:\t%s' % (q, str(
-            "No es possible que creui el pont. Quan epsilon = 0.0, vol dir que el nostre algorisme sempre esta explorant, intentant trobar quina es la ruta mes optima per aconseguir el problema.L'aplha=1 ens esta dient que els estats que hem investigat previament no compten per RES a l'aprenentatge que estem realitzant. Conclusio: si amb aquests parametres (que implquen que l'algorisme nomes esta intentant trobar una resposta, ni de bon tros la mes optima) no es capac de trobar la repsosta amb iteracions INDETERMINADES, es impossible que per altres valors que poguem posar en trobara una solucio."
-            ))
+        print '  Question %s:\t%s' % (q, str(response))
