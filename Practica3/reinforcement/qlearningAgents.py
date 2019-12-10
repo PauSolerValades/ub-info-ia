@@ -24,25 +24,25 @@ class QLearningAgent(ReinforcementAgent):
       Q-Learning Agent
 
       Functions you should fill in:
-      
-        - computeValueFromQValues (Q1): 
+
+        - computeValueFromQValues (Q1):
             - Break ties randomly for better behavior with random.choice()
             - Actions your agent HAS NOT SEEN before have a Q-value of 0.
             - Actions your agent HAS SEEN have a negative Q-value
-            
-            
+
+
         - computeActionFromQValues (Q1):
             - Only acces Q-values with getQValue
-            
+
         - getQValue (Q1):
             - Only acces Q-values with getQValue
-            
+
         - getAction (Q2):
             - Randomize with flip coin if you are going to pick the best path calculated, you choose another one.
-        
+
         - update (Q1)
             - Fucking formula lmao
-            
+
       Instance variables you have access to
         - self.epsilon (exploration prob)
         - self.alpha (learning rate)
@@ -68,7 +68,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         util.Couter inicialitza a 0 tots els valors possibles del diccionari, així que no fa falta posar-la a 0.0
         """
-        
+
         return self.q_values[(state, action)]
 
 
@@ -88,15 +88,6 @@ class QLearningAgent(ReinforcementAgent):
 
         q_list = [self.getQValue(state, action) for action in accions_legals]
 
-
-        """
-        Se de sobres que aquesta manera no es la mes optima ja que recorres diveses vegades la llista, pero no em sembla massa rellevant ja que la llista no sera mai massa gran
-        """
-        """
-        m = max(q_list)
-        
-        largest = [j for i, j in enumerate(q_list) if j == m]
-        """
         return max(q_list)
 
 
@@ -112,12 +103,12 @@ class QLearningAgent(ReinforcementAgent):
 
         if not accions_legals:
             return None
-        
+
         q_list = [(self.getQValue(state, action), action) for action in accions_legals]
-        
+
         m = max(q_list, key=lambda i:i[0])
         #print(q_list, m)
-        
+
         largest = [j[1] for j in q_list if j[0] == m]
 
         return random.choice(largest) if largest else m[1]
@@ -135,18 +126,18 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        
+
         if not legalActions:
             action = None
-        
+
         if util.flipCoin(self.epsilon): #un epsion vegades entra al if
             action = random.choice(legalActions)
-            
+
         else:
             action = self.computeActionFromQValues(state)
-            
+
         return action
-        
+
     def update(self, state, action, nextState, reward):
         """
           The parent class calls this to observe a
@@ -155,12 +146,12 @@ class QLearningAgent(ReinforcementAgent):
 
           NOTE: You should never call this function,
           it will be called on your behalf
-          
+
           RELACIO AMB LES DIAPOS DE TEORIA:
-          
+
           alpha = es el learning rate
           aprox = es la gamma
-          
+
           DIAPO 17 equacions
         """
         gamma = self.discount
