@@ -1,0 +1,545 @@
+\documentclass[12pt,a4paper,catalan, leqno]{article} %Scrartcl és per poder usar subtitols
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[catalan]{babel}
+\usepackage{amsthm,amssymb,amsmath}
+\usepackage[margin=25mm]{geometry}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage[all]{xy}
+\usepackage{dirtytalk}
+\usepackage{pst-node}
+\usepackage{tikz-cd}
+\usepackage{verbatim}
+\usepackage{hyperref} %fa que quan cliquis a l'index et porti al lloc indicat.
+\documentclass[xcolor=table]{beamer}
+\usetikzlibrary{patterns}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows}
+\usetikzlibrary{angles}
+\usetikzlibrary{calc}
+\usetikzlibrary{intersections}
+\usepackage{units}
+\usepackage{relsize}
+\usepackage{physics}
+\usepackage{mathrsfs}
+\usepackage{afterpage}
+\usepackage{stmaryrd}
+\usepackage{cancel}
+\usepackage{multicol}
+\usepackage{pgfplots}\usepgfplotslibrary{polar}
+
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{enumitem}
+\usepackage{titlesec}%això és per enumerar els paragraphs
+\usepackage{multicol}%permet posar dues columnes en un pàgina
+\usepackage[table,xcdraw]{xcolor} %per pintar la puta taula
+
+\pgfplotsset{compat=1.13}
+\setlength{\columnsep}{1.2cm}
+
+%\setkomafont{disposition}{\normalfont} %Això em permet tornar la font del títol a la de LaTeX original.
+
+\title{Inteligencia Artificial}
+%\subtitle{Resum Teoria}
+\author{Pau Soler Valadés}
+\date{Otoño 2019}
+
+
+\setlength{\parskip}{0.3em}
+\setlength{\parindent}{0em}
+\renewcommand{\baselinestretch}{1.3}
+
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex} % Els hi dona el format necessàri
+
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\p}{\mathbb{P}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\s}{\mathcal{S}}
+\newcommand{\U}{\mathcal{U}}
+\newcommand{\Fp}{{\mathbb{F}_p}}
+\newcommand{\Gal}{\mathrm{Gal}}
+\newcommand{\Aut}{\mathrm{Aut}}
+\newcommand{\End}{\mathrm{End}}
+\newcommand{\Hom}{\mathrm{Hom}}
+\newcommand{\Int}{\mathlarger{\int}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\gr}{\mathrm{gr}}
+\newcommand{\im}{\mathrm{im}}
+\newcommand{\rg}{\mathrm{rg}}
+\newcommand{\mcd}{\mathrm{mcd}}
+\newcommand{\mcm}{\mathrm{mcm}}
+\newcommand{\Irr}{\mathrm{Irr}}
+\newcommand{\sig}{\mathrm{sig}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\ind}{\mathrm{index}}
+\newcommand{\PGL}{\mathrm{PGL}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\codim}{\mathrm{codim}}
+\newcommand{\sgn}{\mathrm{sgn}}
+\newcommand{\Ra}{\Rightarrow}
+\newcommand{\cjmn}{\smallsetminus}
+\newcommand{\Lra}{\Leftrightarrow}
+\newcommand{\ol}{\overline}
+\newcommand{\ul}{\underline}
+\newcommand{\nZ}{\frac{\Z}{n\Z}}
+\newcommand{\cqd}{._{\square}}
+\newcommand{\alhpa}{\alpha}
+\newcommand{\susbet}{\subset}
+\newcommand{\susbeteq}{\subseteq}
+\DeclareMathOperator*{\Union}{\bigsqcup}
+\DeclareMathOperator*{\intersec}{\bigcap}
+\DeclareMathOperator*{\union}{\bigcup}
+\DeclareMathOperator*{\lra}{\longrightarrow}
+\DeclareMathOperator*{\lng}{\mathrm{long}}
+\theoremstyle{definition}
+\newtheorem*{props}{Proposició}
+\newtheorem*{propt}{Propiedades}
+\newtheorem{defn}{Definición}[section]
+\newtheorem*{lm}{Lema}
+\newtheorem*{tm}{Teorema}
+\newtheorem*{obs}{Observacions}
+\newtheorem*{demo}{Demostración}
+\newtheorem*{ex}{Exemples}
+\newtheorem*{cor}{Corol·lari}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagebreak %Això ésun salt de pàgina
+\tableofcontents
+\pagebreak
+
+\section{¿Qué es la Inteligencia Artificial?}
+\pagebreak
+\section{Agentes}
+
+\begin{defn}
+Un \textbf{Agente} percibe su entorno mediante sensores y actúa sobre o en él mediante actuadores.
+\end{defn}
+
+Análogamente a un humano, los ojos, oídos y algunos órganos serian los \textbf{sensores} y los brazos, manos, voz los \textbf{actuadores}.
+
+\begin{defn}
+Llamamos \textbf{Percepciones} a los inputs de los sensores en un instante concreto.
+\\El conjunto de percepciones totales de un agente se denomina \textbf{secuencia de percepciones}
+\end{defn}
+
+Matemáticamente podemos ver el comportamiento de un agente como una función.
+
+\begin{defn}
+La \textbf{Función del Agente} $f$ relaciona una o diversas percepciones $P*$ en una acción $A$.
+\begin{center}
+    $f: P* \rightarrow A$
+\end{center}
+\end{defn}
+
+La función del Agente será implementada por el \textbf{Programa del Agente}. La función es la descripción del comportamiento deseado, mientras que el programa es como se implementa este comportamiento.
+
+\subsection{Racionalidad}
+
+Un \textbf{agente racional} es el que hace lo correcto. ¿Cómo sabemos qué es hacer lo correcto? Analizando las consecuencias y actuando acorde.
+
+Cuando un agente analiza un entorno, genera una secuencia de acciones acorde con lo que recibe de este y el agente actua sobre él, modificando su estado. Si la secuencia que el agente ha generado es adequada, significa que el agente ha tenido un buen \textbf{rendimiento}. Midiendo el \textbf{ratio de éxito} del agente en el entorno, podemos \textbf{evaluar} su efectividad.
+
+Evidentemente, no hay una sola evaluación correcta para cada tarea, se debe tener en cuanta en el diseño cuales se adequan más en nuestro caso. Por ejemplo: supongamos una aspiradora que tenga que limplar la suciedad de una habitación. Si definimos la evaluación del rendimiento como "\ limpiar máximo por hora", el agente sera perfectamente racional y tendrá una tasa de éxito altísima limpiando la suciedad, tirándola al suelo y volviéndola a limpiar. Este problema se puede evitar con una mejor definición de objetivos, como "elimina toda la basura".
+
+Teniendo todo lo dicho en cuenta, podemos definir un agente racional:
+
+\begin{defn}
+Un agente es \textbf{racional} si para cada secuencia de percepción dada, el agente seleciona una acción con expectativa de maximizar su tasa de éxito teniendo en cuenta la misma secuencia de percepción y el conocimiento previo del agente.
+\end{defn}
+
+\pagebreak
+
+\section{Problemas de Búsqueda}
+
+En el apartado anterior hemos tratado con \textbf{agentes reflexos}, los cuales basan sus acciones en un mapeado directo de estados a acciones. Estos agentes dejan de tener utilidad cuando el problema escala demasiado rápido en tamaño a almacenar, tiene muchos estados o tardaría demasiado en encontrar las respuestas correctas. A partir de ahora este documento va a tratar de \textbf{Agentes Basados en Objetivos}
+
+\begin{defn}
+Los \textbf{Agentes Basados en Objetivos} son agentes que usan estados simples, sin estructura interna, son sólo representaciones de sí mismos.
+\end{defn}
+
+\begin{propt} \textit{Agentes Basados en Objetivos}
+\begin{enumerate}
+    \item Planifican antes de actuar según un modelo interno de cómo cambiará el mundo basado en sus acciones.
+    \item Buscan secuencias de acciones que conducen a los estados deseados, sus \textbf{objetivos} o \textbf{metas}.
+    \item Son racionales siguiendo la definción dada en el apartado anterior.
+\end{enumerate}
+\end{propt}
+
+Una vez definidos los agentes que usaremos, vamos a centrarnos en qué maneras podemos resolver problemas. Para empezar, debemos aprender a formalizarlos.
+
+\subsection{Etapas de la Resolución de Problemas con Objetivos}
+
+Las etapas las podemos resumir en las siguientes 4:
+\begin{itemize}
+    \item \textbf{Formulación de Objetivos:} definir los estados objetivo, inical y los factores que pueden influir en el grado de satisfacción.
+    \item \textbf{Formulación del Problema:} decidir qué acciones y qué estados considerar para cumplir con los objetivos. Este paso necessita definir:
+    \begin{itemize}
+        \item \textbf{Estados:} Todos los possibles estados en los que el agente puede estar.
+        \item \textbf{Acciones:} Qué acciones puede realizar en el mundo en el que se encuentra.
+        \item \textbf{Función Sucesor:} Dado un estado $s$ y una acción $a$, devuelve los estados possibles. $f_s(s,a) = \{s'_1,...,s'_n\}$.
+    \end{itemize}
+    \item \textbf{Búsqueda de la Solución:} calcular la mejor secuencia de acciones que llevan a algún estado objetivo des de el inicial.
+    \item \textbf{Ejecución:} El agente ejecutará las acciones calculadas.
+\end{itemize}
+
+\paragraph{Ejemplo: Vacaciones en Magaluf}
+
+Imaginemos que nuestro agente está en Magaluf, disfrutando de sus vacaciones. Como está de vacaciones, el rendimiento de este depende de factores como el bronzeado, mejorar su Alemán, no caerse por el balcón, salir de fiesta y minimizar las resacas. Ahora mismo el problema que ha de solucionar es complejo y difícil de formalizar.
+
+Ahora supongamos que el agente tiene un billete para marcharse a casa desde Palma. Si no llega a Palma a tiempo, perderá el dinero y no podrá volver a casa. Ahora el \textbf{objetivo ha sido formulado} clara y concisamente: toda actividad que no implique llegar a Palma es descartada imediatamente, y el problema de decisión del agente se ha simplificado.
+
+\vspace{2mm}
+\noindent\fbox{
+\parbox{\textwidth}
+{
+    \textit{\textbf{Formulación de Objetivos:} Definir los objetivos correctos permite organizar el comportamiento y enfocar mejor el problema, simplificarlo y hacerlo útil.}
+}
+}
+\vspace{1mm}
+
+Ahora que hemos definido el estado objetivo y el estado inicial, debemos decidir \textbf{qué acciones puede realizar el sujeto}. Si las acciones para viajar a Palma desde Magaluf son "Desplaza tu pie 30 centímetros" o "gira el volante 30 grados" nuestro agente no va a llegar nunca porque hay tanto nivel de detalle en esas acciones que produce \textbf{incertidumbre}.
+
+Sabemos que nuestro agente tiene coche y sabe conducir, así que las acciones más útiles serian conducir hasta otra ciudad, siendo las ciudades possibles de Mallorca los estados, conducir de una ciudad a otra la acción y la función sucessor siendo las carreteras que conectan los pueblos.
+
+\vspace{2mm}
+\noindent\fbox{
+\parbox{\textwidth}
+{
+    \textit{\textbf{Formulación del Problema:} Definir las acciones relevantes para el contexto ayuda a simplificar más el problema, pudiendole dar así una solución más sencilla.}
+}
+}
+\vspace{1mm}
+
+Suponemos que el Agente tiene un mapa de Mallorca. Puede conducir hasta Palmanova, Torrenova o La Torrassa. A medida que lo mira consigue encontrar un camino para así coger el avión a tiempo. El agente con múltiples opciones de valor desconocido puede decidir qué hacer primero examinando futuras acciones que le llevaran hasta un estado de valor conocido. Pero aquí hemos realizado alguna que otra asunción: asumimos que el entorno es \textbf{observable} (el agente sabe siempre su posición), asumimos que el entorno es \textbf{discreto} (desde un estado dado hay un número finito de elecciones), asumimos que conocemos el entorno (porque hemos assumido que el agente tiene un mapa) y asumimos que el entorno es \textbf{determinista} (cada acción tiene una sola salida).
+
+Bajo todas esas asunciones podemos decir que la solución a este problema es una secuencia concreta de acciones. Si os parecen demasiadas y que evidentemente todo problema bajo esa axiomática tiene solución, permitidme deciros que no. Sin salir del mismo ejemplo, podría pincharse la rueda del coche o que una carretera esté cortada y necessitemos una ruta alternativa entre dos ciudades. Pero como el agente \textbf{percive un entorno parametrizado y determinista siempre que termina una acción} puede variar sin tener que hacer las dos últimas assumpciones.
+
+\vspace{2mm}
+\noindent\fbox{
+\parbox{\textwidth}
+{
+    \textit{\textbf{Búsqueda de la Solución:} Buscar es encontrar la secuencia de acciones que llegue a la meta. En nuestro caso, esto lo consigue un algorismo de búsqueda. Y no nos olvidemos que pese a tener la solución, aún queda conducir hasta Palma, siendo esto la \textbf{ejecución}.}
+}
+}
+\vspace{1mm}
+
+Ahora, ¿qué maneras tenemos de encontrar la ruta hasta Palma? Aquí es cuando entran en juego los algorítmos de búsqueda informada y no informada.
+
+\subsection{Denominaciones Análogas IA vs. Algorismica}
+
+Todo problema de búsqueda de puede expressar gráficamente como un grafo. En este grafo los vértices (nodos) són los possibles estados y los arcos (edges) representa la función sucessor. Estos grafos son tan grandes que en contadas ocasiones de puede contruir en memoria. Aquí yace el \textit{quid} de la \textbf{diferencia entre la algorísmica y la IA}:
+
+En la primera dado un grafo, investigamos maneras de recorerrlo entero y analizamos cual es más adecuado para cierto tipo de exploraciones. En canvio en IA, el grafo no viene dado, lo vamos construyendo a medida que avanzamos y tampoco lo vamos a construir todo, sólo queremos encontrar la primera solución possible. A continuación daremos unas definiciones para introducir los algoritmos de búsqueda:
+
+\begin{defn}\textit{Algoritmos}
+\begin{itemize}
+    \item \textbf{Espacio de Estados:} Lugar conceptual dónde se realiza la búsqueda.
+    \item \textbf{Expandir:} Acción de saber los vecinos de un nodo mediante la función sucesor. Análogo a explorar.
+    \item \textbf{Frontera:} Lista de nodos visitados que tienen que ser expandidos. Análogo a pendientes de visitar.
+    \item \textbf{Nodos Cerrados:} Nodos que ya se han expandido. Se usa para evitar cíclos. Análogo a visitados.
+\end{itemize}
+\end{defn}
+
+\subsection{Búsqueda No Informada}
+
+\begin{defn}
+Un \textbf{Algoritmo de Búsqueda No Informada} (o \textbf{algoritmo de búsqueda ciega}) es un algoritmo que no recive más información que la descripción del problema. Sólo puede generar sucesores y distinguir entre un estado objetivo y uno que no lo és.
+\end{defn}
+
+Al no tener ninguna información extra sobre el problema, los resultados seran \textit{a priori} menos óptimos que con algoritmos de búsqueda informada, pero ganamos en generalidad, resultando algoritmos más verátiles y aplicables a muchos más problemas.
+
+Su clasificación se distingue por el orden en que se exploran estas soluciones.
+
+\subsubsection{Búsqueda Primero en Anchura}
+
+El BFS prioriza la expansión a los nodos cuya profundidad sea menor.
+\paragraph{Implementación}
+La implementación de la frontera debe ser una cola FIFO (\textit{First-In First-Out}). Es decir, una lista.
+
+[TODO QUE NO TODO: UNA TAULA DE COM ES FA UN BFS COM VOLEN AQUESTS PRIMMIRATS]
+
+\subsubsection{Búsqueda Primero en Profundidad}
+
+El DFS prioriza la expansión a los nodos cuya profundidad sea mayor. 
+
+\paragraph{Implementación}
+La frontera debe ser una lista LIFO (\textit{Last-In First-Out}). Es decir, un stack (pila).
+
+[TODO QUE NO TODO: UNA TAULA DE COM ES FA UN DFS COM VOLEN AQUESTS PRIMMIRATS]
+
+
+\subsection{Búsqueda Informada}
+
+\begin{defn}
+Un \textbf{Algoritmo de Búsqueda Informada} es un algoritmo que recive (aparte de la descripción del problema) información característica sobre el problema que estamos tratando.
+\end{defn}
+
+Estos tipos de algoritmos encuentran soluciones mucho más rápido que los de búsqueda no informada a costa de individualizar el problema. La primera aproximación que tomaremos es la búsqueda del \textbf{primero-mejor}: esta filosofía dicta que el nodo que se selecione para expandir dependerá de una función evaluación:
+
+\begin{defn}
+Una \textbf{Función Evaluación} $f(n)$ es la función que evalua los estados de un problema. No es única para todos los problemas: variará en función de ellos. La elección de esta determinará qué estrategia de búsqueda se debe seguir.
+\end{defn}
+
+En \textit{primero-mejor} el nodo con la menor evaluación será el primero seleccionado. Pero si intoducimos más información sobre el problema, damos con el concepto de \textbf{heurística}:
+
+\begin{defn}
+Una \textbf{Función Heurística} $h(n)$ es el coste estimado del camino menos costoso desde un nodo cualquiera (nodo $n$) hasta el nodo objetivo.
+\end{defn}
+
+\begin{propt} \textit{Función Heurística}
+
+Más adelante las trataremos en profundidad, pero de momento daremos las siguientes propiedades:
+
+\begin{itemize}
+    \item Son arbitrarias y no generales: dependen de cada problema.
+    \item Siempre de debe cumplir que $h(n) > 0$, y si $n$ es un nodo objetivo $h(n) = 0$.
+    \end{itemize}
+\end{propt}
+
+\subsubsection{Búsqueda Voraz Primero-Mejor}
+
+La búsqueda voraz con primero-mejor intenta expandir el nodo que está más cerca de la meta, el que parece que va a hacernos llegar a la solución con menos coste. Dicho de otra manera, evalua los nodos únicamente minimizando la heurística, así que $f(n) = h(n)$.
+
+\paragraph{Implementación}
+
+La frontera tiene que ser una cola prioritaria, ordenada por orden creciente de la heurística: se sacan primero los nodos con menor heurística.
+
+\paragraph{Ejemplo}
+
+[TODO QUE NO TODO: POSAR EXEMPLE POWER POINT]
+
+Este algorismo no es óptimo, puede tener búcles infinitos provocados por la ambición del mismo: a cada paso intenta estar más cerca de la meta, en vez de hacer un análisi del problema y tener una buena heurística.
+
+\subsubsection{Búsqueda A*}
+
+A* (pronunciado "A-estrella") es el algorismo de primero-mejor más conocido y óptimo con la heurística adecuada. Este evalua los nodos combinando el coste para llegar al nodo n ($g(n)$) y el coste de llegar al nodo desde la meta, la heurística:
+
+\begin{center}
+    $f(n) = g(n) + h(n)$
+\end{center}
+
+Con esta configuración, $f(n)$ representa el coste estimado de la solución más óptima hacia el nodo n. Intuitivamente, si estmos intentando encontrar la solución más óptima, tendríamos que escoger el nodo que minimize $g(n) + h(n)$. Resulta que no solo intuitivamente esto es correcto. Matematicamente, si la heurística cumple una serie de requisitos (de los que hablaremos más adelante), A* es NP-completo y óptimo.
+
+\paragraph{Ejemplo:}
+
+[TODO QUE NO TODO: POSAR EXEMPLE POWER POINT]
+
+\paragraph{Optimalidad}
+
+Para que A* sera óptimo la heurística debe ser \textbf{admissible}:
+
+\begin{defn}
+Una \textbf{Heurística Admisible} es aquella que nunca sobreestima el coste para llegar a la meta. És decir: $h(n) \geq g(n)$.
+\end{defn}
+
+Las heurísticas admisibles se tildan también de \textbf{Optimistas}. Es decir: piensan que el coste de entcontrar la solución es menos del que es. Para entender esto usemos el contrarecíproco: si sobreestimamos el coste para llegar a la meta, significa que $h(n) \leq g(n)$, así que no haria falta que exisitiera $h(n)$ porque podríamos usar directamente el coste $g(n)$ en su lugar.\\
+Un gran ejemplo es la heurística del ejemplo de A*, la linea recta entre dos puntos es siempre la distancia más corta, así que estés en la ciudad que estés, $h(n) \geq g(n)$ mostrando su optimismo.
+
+La otra condición para la optimalidad de A* en búsqueda de grafos es que la heurística debe ser \textbf{consistente}:
+
+\begin{defn}
+Una \textbf{Heurística Consistente} es aquella que para cada nodo $n$ y cada sucesor $n'$ de $n$ generada por cualquier acción $a$, el coste estimado no sea mayor que la suma de los costes de llegar hasta $n'$ desde $n$ ($c(n,a,n')$) y el coste estimado hasta el nodo objetivo (h(n')).
+\begin{center}
+    $h(n) \leq c(n,a,n') + h(n')$
+\end{center}
+\end{defn}
+
+Se puede observar que esto es una forma de \textit{desigualdad triangular}, que estipula que la suma de los lados siempre será más pequeña o igual que la hipotenusa. La explicación de por qué se cumple esto es sencilla: si del nodo $n$ a $G_n$ hay un camino $n'$ menos costoso que $h(n)$, estaríamos violando que la heurística es siempre menor al coste, es decir, la \textbf{condición de admisibilidad}.
+
+\begin{tm}
+\textit{La búsqueda A* en árbol es óptima si y sólo si la heurística $h(n)$ es admisible.}
+
+\begin{demo}
+[TODO NO TODO: DEMO DE LA OPTIMADIDADA, ESQUE NO ENTRA]
+\end{demo}
+\end{tm}
+
+\begin{tm}
+\textit{La búsqueda A* en grafos es óptima si y sólo si la heurística $h(n)$ es consistente.}
+
+\begin{demo}
+[TODO NO TODO: DEMO DE LA OPTIMADIDADA, ESQUE NO ENTRA]
+\end{demo}
+\end{tm}
+
+\pagebreak
+\section{Búsqueda En Juegos}
+
+En este apartado trataremos los algoritmos más eficientes para que una IA juegue a un \textbf{juego} en entornos con \textbf{múltiples agentes}. Su objetivo será calcular una \textbf{política} para decidir qué movimiento realizar en cada estado. Pero, para empezar, ¿qué es un juego en IA?
+
+\begin{defn}
+Un \textbf{Juego} se define como un entorno \textit{competitivo} donde los objetivos de los agentes entran en \textit{conflicto}: ambos quieren ganar.
+\end{defn}
+
+En el campo de IA, classificamos los juegos según la información que tenemos disponible y los resultados de nuestras acciones. Deterministas vs. Estocásticos, con información perfecta vs información imperfecta y de suma zero o no suma zero.
+
+\begin{defn}
+Un juego \textbf{Determinista} es un juego completamente predecible, en el que el la acción $a$ en el estado $e$ siempre dará el mismo conjunto de estados sucesores $E'$. $f_s(a,e) = \{e'_1,...,e'_n\} = E'$.
+
+Al contrario, un juego no determinista o \textbf{Estocástico} es un juego en el que el siguiente estado dados una acción y estado concreto depende de un factor no completamente controlable. Depende de una \textbf{probabilidad}.
+\end{defn}
+
+\begin{defn}
+Un juego de \textbf{Información Perfecta} es en el que los jugadores, de cualquier acción tomada en cualquier estado, pueden conocer todas los estados a los que eso lleva. Dicho de manera más informal, se pueden saber todas las consequencias que implica cada acción.
+
+En cambio, un juego de \textbf{Información Imperfecta} es uno dónde no podemos saber todas o ninguna de las consequencias que tendrá cierta acción en cierto estado.
+\end{defn}
+
+\begin{defn}
+Un juego de \textbf{Suma Zero} es en que los beneficios o las pérdidas de un jugador son exactamente las pérdidas o beneficios del otro. Lo que uno gana, lo pierde el otro.
+\end{defn}
+
+\subsection{Juegos Deterministas}
+
+El tipo de problemas más comunes en IA son los \textit{deterministas con información perfecta}: entornos completamente observables en los que cada acción implica consequencias que podemos evaluar. Pero no todos estos juegos son interessantes, pongamos por ejemplo un cubo de rubik.\\
+Un cubo de rubik es un juego determinista con información perfecta de un jugador con el objetivo de resolver el cubo. Estos tipos de problemas se resuelven solamente con una búsqueda informada que hemos tratado en el apartado anterior. En este problema, cada nodo del grafo de estados representa un valor: el mejor que podremos conseguir si vamos por esa rama.
+
+Cojamos ahora uno de los juegos más famoso en IA: el Ajedrez. El ajedrez es un juego determinista con información perfecta de dos jugadores de suma zero.
+
+El ajedrez es de suma zero porque cuando un jugador mata una pieza, el otro la pierde. Hay muchos otros juegos multijugador que tienen esta característica, el tres en ralla, las damas, el Go y la lista sigue.
+
+Los problemas de la \textit{búsqueda en juegos son interessantes por lo intratables que son}. Volviendo al ajedrez, cada estado (posición de las piezas en el tablero) tiene, de media, un factor de ramificación de 35 y suponiendo que en cada partida cada jugador realiza 50 movimientos, tenemos $35^{100}$ nodos en el árbol. Para hacernos una idea de lo grande que es ese número, ni aún que todos los átomos del universo estuviesen evaluando los nodos por milisegundo desde el principio del mismo, no podríamos tener una solución. Las \textbf{políticas} que se han desarrollado para hacer estos problemas tratables son lo que vamos a explicar a continuación.
+
+\subsubsection{Minimax}
+
+
+
+\subsection{Juegos Estocásticos}
+
+Recordemos que los juegos estocásticos son aquellos que contienen un elemento aleatorio. Como ejemplo principal tenemos el Backgammon. Al principio del juego se tira un dado para determinar los movimientos legales en esa partida. Cuando un jugador ya ha tirado el dado, no hay manera de saber qué possibles movimientos tendrá el otro, ya que tendrá que tirar el dado.
+
+Para construir el árbol en ese caso, debemos incluir \textbf{nodos probables} junto con los máximos i mínimos del minimax. És decir, construimos todos los nodos possibles con la probabilidad de que pasen. En cuanto el otro jugador tire el dado, podamos los que no representan lo que ha pasado.
+
+Como no sabemos el valor que pueden tener esos nodos, no podemos evaluar mínimos y máximos. En cambio, podemos evaluar el 
+
+\subsubsection{Expectiminimax}
+
+$\varepsilon, \epsilon$
+
+\pagebreak
+\section{Problemas de Decisión Secuenciales}
+
+En este apartado nos concentraremos en \textbf{Problemas de Decisión Secuenciales}, en los que el Agente Inteligente depende de una \textit{secuencia de decisiones}. Estos problemas conllevan incertidumbre, análisis del entorno y objetivos que tendremos que resolver o sobrellevar.
+
+\paragraph{Problema del Agente Rejilla}
+
+Supongamos que nuestro agente está situado en el entorno de la figura. Cuando el agente alcanza la casilla con un +1 o un -1, termina la interacción con el entorno.
+
+[TODO FIGURE 17.1 AIAMA]
+
+Igual que en los \textit{problemas de búsqueda}, las acciones disponibles para cada agente en un estado viene dada por la función $A(s)$, donde s es un estado. También assumimos que el agente sabe siempre dónde está (ambiente completamente observable). Pero nuestro problema  es \textbf{estocástico}, así que la sencilla secuencia de soluciones deterministas [arriba, arriba, izquierda, izquierda, izquierda] no es possible, ya que \textbf{las acciones que el agente puede realizar no son consistentes} ni siempre las mismas.
+
+Para resolver este problema podemos hacer que el agente siga un modelo como el de la figura (b): un 0.8 de las veces va arriba, un 0.1 a la izquierda y otro 0.1 a la derecha, siendo esos números la probabilidad de que el hagente realize dicha acción. Pero ahora la \textit{función sucesor} no sirve para determinar qué estados tenemos disponbiles dada una acción $a$ i un estado $s$ para llegar a $s'$, así que lo escribimos como la probabilidad condicionada de que dados un estado y una acción $s, a$ passe el estado $a'$: $P(s'|s,a)$. Eso último solo passa si nuestro problema (un cierto proceso estocástico) cumple con la \textbf{propiedad de Markov}, que es que ese proceso " \ Carezca de memoria"
+
+\begin{defn}
+La \textbf{Propiedad de Markov} es la propiedad de ciertos procesos estocásticos de que la distribución de probabilidad de una variable aleatoria depende solamente de su valor presente, siendo independiente de la historia de esa variable. Matemáticamente:
+\begin{center}
+    $P(S_{t+1}|S_t,a_t,S_{t-1},a_{t-1},...,S_0,a_0) = P(S_{t+1}|S_t,a_t)$
+\end{center}
+\end{defn}
+
+En nuestra secuencia de decisión estocástica esto significa que $P(s'|s,a)$ depende solo del estado $s$ y no de como ese agente ha pasado por otros estados antes.
+
+Para terminar, solo nos falta dar un incentivo al agente por explorar y otro para evaluar su rendimiento. Como estamos en un problema secuencial, la \textit{función evalaución} $f_e$ no puede evaluar solo un estado, sinó que tiene que \textbf{evaluar una secuencia de ellos}. Lo que si podemos poner es un incentivo para que el agente explore, una \textbf{Recompensa}. Por cada estado $s$ que el agente visite, recibirá una recompensa $R(s)$. La naturaleza de esta puede ser positiva, negativa, grande o pequeña pero \textbf{debe ser acotada}:\\
+Supongamos una \textit{recompensa} de -0.04 en todos los estados (excepto los terminales, los cuales es -1 o 1) y que $f_e$ es la suma de todas las recompensas recibidas. Si por ejemplo el agente llega al +1 en 10 turnos, $f_e(s_t) = -0.04 \times 10 + 1 = 0.6$. Nuestra recompensa negativa ha promovido que el agente investigase, que no estuviese cómodo en la posición en la que se encontraba. En cambio si nuestra $R(s) > 0$ (como se ve en la figura) no incentivamos a nuestro agente a moverse, así que rehúye los estados terminales. También en esa figura se ven otros valores de $R(s)$ y sus mismas consequencias en el agente.
+
+Esto que hemos descrito es un \textbf{proceso de decisión de Markov}.
+
+\subsection{Proceso de Decisión de Markov}
+
+Recapitulando desde el ejemplo anterior, podemos enumerar las características que tiene un \textbf{Proceso de decisión de Markov (MDP)}.
+
+\begin{defn}
+Un \textbf{MDP} es un problema de decisión secuencial estocástico cumpliendo la propiedad de Markov que tiene:
+\begin{itemize}
+    \item Conjunto de estados $S$.
+    \item Conjunto de acciones $A$.
+    \item Función de Transmision $T: A\times S\times S \rightarrow [0,1]$ donde $T(a,s,s') = P(s'|a,s)$
+    \item Función de recompensa $R: S\times A\times S  \rightarrow \R$ (Se abrevia por $R(s)$)
+    \item Estado Inicial y (a veces) Estado Terminal.
+\end{itemize}
+\end{defn}
+
+Una vez dado un PMD, debemos definir una \textbf{solución} a este.
+
+\begin{defn}
+Una \textbf{Política} $\pi: S \rightarrow A$ especifica qué debe hacer el agente para cualquier estado que este pueda alcanzar.
+\end{defn}
+
+Una política da solución a un MDP dónde $\pi(s)$ es la acción recomendada por la política en un estado $s$. Una política se dice \textbf{completa} si $\forall s \in S $ $\exists a \in A : \pi(s) = a$.
+
+Una política que dé solo la mejor solución dado cualquier estado es una \textbf{política óptima}, y se denota por $\pi^*$. Una política representa al completo una \textit{función de agente} y es la descripción de un agente reflejo.
+
+\subsection{Utilidad de una Política}
+
+En el ejemplo anterior, el rendimiento del agente estaba medido por la suma de las recompensas de los estados visitados, pero puede ser evaluada de muchas otras maneras; a partir de ahora escribiremos la función utilidad como $U_h([s_0,...,s_n])$, donde $s_i$ son los estados visitados por nuestro agente.
+
+Primero supongamos que tenemos un \textbf{horizonte finito}, que el juego termina en un tiempo $N$ fijado, o dicho de otra manera, $U_h([s_0,...,s_N])$ es el total de la evaluación [\textit{NOTA: No confundir horizonte (in)finito con secuencias de ACCIONES (in)finitas. Las primeras determinan un tiempo máximo en el que se permite jugar, el segundo describe las acciones que sigue el agente para llegar (o no) a un estado terminal.}]. Esto hace que el agente tenga "Prisa" para llegar al estado terminal cuando $N$ es pequeña y que cuando $N$ sea significativamente mayor pueda dar más rodeos. Esto degenera en que la política del agente se vuelve \textbf{no-estacionaria}:
+
+\begin{defn}
+Una política \textbf{no-estacionaria} es que, en un horizonte finitio, la acción optima en un estado dado puede variar respecto el tiempo.
+
+En canvio, diremos de una \textbf{Política Estacionaria} la que se produce cuando no hay límite de tiempo, ya que sólo depende del estado actual.
+\end{defn}
+
+Deducimos de lo anterior que los \textbf{horizontes infinitos} (en los que no tenemos un límite de tiempo o acciones) nos daran problemas más sencillos de tratar. Siguiendo en esta línea, consideramos preferencias estacionarias sobre secuencias de estados para calcular su utilidad:
+
+\begin{defn}
+Una secuencia se dice \textbf{estacionaria} cuando dadas dos secuencias de estados/recompensas empiezan con el mismo estado/recompensa, tendran un solo orden: el mismo que tenian cuando empezaban con el mismo estado/recompensa.
+\begin{center}
+    $[r,r_1,r_2...]$ \succ $[r,r'_1,r'_2...] \iff [r_1,r_2...] \succ [r'_1,r'_2...]$
+\end{center}
+\end{defn}
+
+\begin{tm}
+\textit{Dadas preferencias estacionarias, únicamente existen dos maneras de definir la utilidad $U([s_i])$ de una secuencia de acciones:
+\begin{itemize}
+    \item Aditivamente: $U([s_0, s_1, s_2...]) = R(s_0) + R(s_1) + R(s_2) + ...$
+    \item Aditiva con descuento: $U([s_0, s_1, s_2...]) = R(s_0) + \gamma R(s_1) + \gamma_2 R(s_2) + ...$
+\end{itemize}}
+\end{tm}
+
+El teorema anterior ha sido anunciado para secuencias infinitas, pero nada nos garantiza que la adición de la utilidad converga ni que lo haga en un tiempo finito. ¿Cómo solucionamos este inconveniente?
+
+La primera solución ya ha sido mentada, si determinamos un horizonte finito en T y desarrollamos una política no-estacionaria que depenga del tiempo restante.
+
+La segunda opción es crear un \textbf{estado absorbente}. Ese estado es uno en que con probabilidad 1, si el agente llega a él morirá. Haciendo este cambio estamos forzando la secuencia infinita a tener fin, convirtiendo la utilitdad de todo estado en finita.
+
+Y por tercera y última opción, mediante el segundo punto del teorema: adición con descuento.
+Dada $0<\gamma<1$, podemos expresar la utilidad como
+\begin{center}
+    $U([s_0,...,s_\infty]) = \sum_{t=1}^{\infty} \gamma^t R(s_t) \leq R_{max}/(1-\gamma)$
+\end{center}
+donde si $\gamma$ tiene valores cercanos a 0 indica que estamos mucho más interesados en las recompensas de los estados más inmediatos, mientras que con $\gamma$ más cercana a 1 con las recompensas de los estados que vendran más tarde.
+
+Matemáticamente se puede demostrar que usando el descuento los algoritmos si convergen, y por lo tanto obtengamos una solución.
+
+\subsection{Políticas y Utilidades Óptimas}
+
+Siguiendo con la elección de que la utilidad de un estado es la suma de las recompensas con descuento de la secuencia, podemos comparar políticas por el valor esperado. Dada una política $\pi$, la utilidad con descuento esperada es $U_\pi = \sum_{t=1}^{\infty} \gamma^t R(s_t)$. Como los estados
+
+\subsection{Iteración de Valores}
+
+\pagebreak
+\section{Aprendizaje por Refuerzo}
+
+\pagebreak
+\section{Referencias}
+
+\end{document}
